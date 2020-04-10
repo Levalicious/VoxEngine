@@ -1,7 +1,6 @@
 
 #pragma once
 #include "common.h"
-#include "jc_voronoi.h"
 #include <string.h>
 
 /* Bad former code: https://pastebin.com/ACuLSpga */
@@ -43,41 +42,3 @@ bool inCircumcircle(tri t, vec2 point) {
 const static float maxAge = 90000.f;
 const static float maxElev = 90000.f;
 const static float maxVel = 100.f;
-
-void heightmap(float** map, int mapSize, int seed, int plates) {
-    srand(seed);
-    /* Generate points */
-    jcv_point* platePoints = malloc(sizeof(jcv_point) * plates);
-    float* plateAges = malloc(sizeof(float) * plates);
-    float* plateElev = malloc(sizeof(float) * plates);
-    float* plateXVel = malloc(sizeof(float) * plates);
-    float* plateYVel = malloc(sizeof(float) * plates);
-
-    for (int i = 0; i < plates; i++) {
-        platePoints[i].x = ((float)rand() / (float)(RAND_MAX)) * mapSize;
-        platePoints[i].y = ((float)rand() / (float)(RAND_MAX)) * mapSize;
-        plateAges[i] = ((float)rand() / (float)(RAND_MAX)) * maxAge;
-        plateElev[i] = ((float)rand() / (float)(RAND_MAX)) * maxElev;
-        plateXVel[i] = ((float)rand() / (float)(RAND_MAX)) * maxVel;
-        plateYVel[i] = ((float)rand() / (float)(RAND_MAX)) * maxVel;
-    }
-
-    jcv_diagram dia;
-    memset(&dia, 0, sizeof(jcv_diagram));
-    jcv_rect rect;
-    memset(&rect, 0, sizeof(jcv_rect));
-    rect.max.x = mapSize;
-    rect.max.y = mapSize;
-    rect.min.x = 0;
-    rect.min.y = 0;
-    jcv_diagram_generate(plates, platePoints, &rect, NULL, &dia);
-
-    /* This ^^ gives me voronoi-shaped plates with elevations, ages, and velocities.
-     * The plate boundaries need to be noise perturbed, the plates need to be separated
-     * into continental and oceanic (oceanic are younger), and then there needs to be some
-     * way to simulate fault features:
-     * https://leatherbee.org/index.php/2018/11/19/terrain-generation-5-fault-features/ */
-
-
-
-}
